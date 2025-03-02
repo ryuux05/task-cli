@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -11,11 +10,6 @@ import (
 
 func main() {
 	//Init db
-	if len(os.Args) <2 {
-		fmt.Println("Usage: mycli <command>")
-		return
-	}
-
 	db, err := storage.NewSqlite()
 	if err != nil {
 		log.Fatalf("Failed to connect to db: %v", err)

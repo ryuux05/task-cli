@@ -13,7 +13,7 @@ func NewSqlite() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}

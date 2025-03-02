@@ -18,6 +18,7 @@ func NewTaskService(repo TaskRepository) (TaskService) {
 func (s *TaskServiceImpl) HandleAdd(newTask NewTaskSchema) {
 	if !newTask.Validate() {
 		log.Println("Provide task to add")
+		return
 	}
 	task := Task{
 		Name: newTask.Name,
@@ -25,15 +26,15 @@ func (s *TaskServiceImpl) HandleAdd(newTask NewTaskSchema) {
 
 	if err := s.repository.AddTask(task); err != nil {
 		log.Println("Failed to add task: %v", err)
+		return
 	}
-
-	log.Println("Task added")
 }
 
 func (s *TaskServiceImpl) HandleList(completed bool, all bool) {
 	tasks, err := s.repository.GetTask()
 	if err != nil {
-		log.Println("Could't get task")
+		log.Println("Could't get task: %v", err)
+		return
 	}
 
 	if len(tasks) == 0 {
@@ -47,7 +48,7 @@ func (s *TaskServiceImpl) HandleList(completed bool, all bool) {
 		if task.Status == "done" {
 			status = "[✔]"
 		}
-		fmt.Printf("%s [%d] %s (Priority: %s)\n", status, task.Id, task.Name)
+		fmt.Printf("%s [%d] %s \n", status, task.Id, task.Name)
 	}
 	
 }

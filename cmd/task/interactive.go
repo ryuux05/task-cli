@@ -37,9 +37,10 @@ func startInteractiveMode(service task.TaskService) {
 			service.HandleAdd(task.NewTaskSchema{Name: taskText})
 
 		case "list":
-			completed := flag.Bool("c", false, "Show only completed tasks")
-			all := flag.Bool("a", false, "Show all tasks")
-			flag.CommandLine.Parse(os.Args[2:])
+			listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+			completed := listCmd.Bool("c", false, "Show only completed tasks")
+			all := listCmd.Bool("a", false, "Show all tasks")
+			flag.CommandLine.Parse(os.Args[1:])
 			service.HandleList(*completed, *all)
 
 		case "done":

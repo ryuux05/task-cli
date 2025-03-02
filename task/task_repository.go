@@ -17,9 +17,11 @@ func NewTaskRepository(db *sql.DB) (TaskRepository) {
 
 func (r *TaskRepositoryImpl) AddTask(task Task) (error) {
 	query := `
-		INSERT OR IGNORE INTO tasks (name) VALUES ($1)
+		INSERT INTO tasks (name, status)
+        SELECT ?, (SELECT id FROM status WHERE name = 'pending')
+        WHERE NOT EXISTS (SELECT 1 FROM tasks WHERE name = ?);
 	`
-	res, err := r.db.Exec(query, task.Name)
+	res, err := r.db.Exec(query, task.Name, task.Name)
 	if err != nil {
 		return fmt.Errorf("Failed to execute query: %v", err)
 	}
@@ -39,9 +41,9 @@ func (r *TaskRepositoryImpl) AddTask(task Task) (error) {
 
 func (r *TaskRepositoryImpl) GetTask() ([]Task, error) {
 	query := `
-		SELECT t.name, s.name 
+		SELECT t.id, t.name, s.name 
         FROM tasks t
-        JOIN status s ON t.status_id = s.id;
+        JOIN status s ON t.status = s.id;
 	`
 
 	rows, err := r.db.Query(query)
@@ -53,7 +55,7 @@ func (r *TaskRepositoryImpl) GetTask() ([]Task, error) {
 	var tasks []Task
 	for rows.Next() {
 		var task Task
-		if err := rows.Scan(&task.Name, &task.Status); err != nil {
+		if err := rows.Scan(&task.Id, &task.Name, &task.Status); err != nil {
 			return make([]Task, 0) ,fmt.Errorf("Failed to scan result: %v", err)
 		}
 		tasks = append(tasks, task)
