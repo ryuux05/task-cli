@@ -13,7 +13,7 @@ type NewTaskSchema struct {
 
 type TaskRepository interface {
 	AddTask(newTask NewTaskSchema) (error)
-	GetTask() ([]Task)
+	GetTask() ([]Task, error)
 }
 
 type TaskService interface {
