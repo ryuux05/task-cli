@@ -30,7 +30,7 @@ func executeCommand(service task.TaskService, args []string) {
 		completed := flag.Bool("c", false, "Show only completed tasks")
 		all := flag.Bool("a", false, "Show all tasks")
 		flag.CommandLine.Parse(os.Args[2:])
-		service.HandleList(completed, all)
+		service.HandleList(*completed, *all)
 
 	case "done":
 		if len(args) < 2 {
