@@ -12,13 +12,17 @@ type NewTaskSchema struct {
 }
 
 type TaskRepository interface {
-	AddTask(newTask NewTaskSchema) (error)
+	AddTask(task Task) (error)
 	GetTask() ([]Task, error)
 }
 
 type TaskService interface {
-	HandleAdd(newTask NewTaskSchema) (error)
-	HandleList(completed bool, all bool) ([]Task, error)
-	HandleDelete(id int) (error)
-	HandleDone(id int) (error)
+	HandleAdd(newTask NewTaskSchema) 
+	HandleList(completed bool, all bool) 
+	HandleDelete(id int) 
+	HandleDone(id int)
+}
+
+func(t *NewTaskSchema) Validate() (bool) {
+	return t.Name != ""
 }
