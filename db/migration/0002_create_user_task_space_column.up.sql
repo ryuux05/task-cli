@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tasks_spaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    space_url TEXT UNIQUE NOT NULL,
+    joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    owner TEXT NOT NULL,
+    collaborator TEXT NOT NULL,
+    
+);

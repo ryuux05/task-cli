@@ -1,6 +1,7 @@
 package task
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"os"
@@ -116,6 +117,35 @@ func GenerateAndDisplayTaskList(tasks []Task) error {
 		return fmt.Errorf("error parsing template: %v", err)
 	}
 
+	// Ensure the assets directory exists in the same location as the HTML file
+	assetsBaseDir := filepath.Dir(filePath)
+	assetsDir := filepath.Join(assetsBaseDir, "assets")
+	cssDir := filepath.Join(assetsDir, "css")
+	jsDir := filepath.Join(assetsDir, "js")
+
+	// Create directories if they don't exist
+	os.MkdirAll(cssDir, 0755)
+	os.MkdirAll(jsDir, 0755)
+
+	// Copy the CSS and JS files to the assets directory
+	cssSourcePath := filepath.Join(filepath.Dir(filepath.Dir(templatePath)), "assets", "css", "tasks_list.css")
+	cssDestPath := filepath.Join(cssDir, "tasks_list.css")
+
+	jsSourcePath := filepath.Join(filepath.Dir(filepath.Dir(templatePath)), "assets", "js", "tasks_list.js")
+	jsDestPath := filepath.Join(jsDir, "tasks_list.js")
+
+	// Copy CSS file
+	if cssContent, err := os.ReadFile(cssSourcePath); err == nil {
+		os.WriteFile(cssDestPath, cssContent, 0644)
+		fmt.Println("DEBUG: CSS file copied to:", cssDestPath)
+	}
+
+	// Copy JS file
+	if jsContent, err := os.ReadFile(jsSourcePath); err == nil {
+		os.WriteFile(jsDestPath, jsContent, 0644)
+		fmt.Println("DEBUG: JS file copied to:", jsDestPath)
+	}
+
 	// Convert tasks to view models
 	var taskViewModels []TaskViewModel
 	for _, task := range tasks {
@@ -128,15 +158,22 @@ func GenerateAndDisplayTaskList(tasks []Task) error {
 		TotalTasks: len(taskViewModels),
 	}
 
-	// Render the template to the file
-	if err := tmpl.Execute(file, viewModel); err != nil {
-		return fmt.Errorf("error rendering template: %v", err)
-	}
+	// Modify the HTML template links to use the correct relative paths
+	// instead of absolute paths for the CSS and JS files
+	modifiedHTML := new(bytes.Buffer)
+	tmpl.Execute(modifiedHTML, viewModel)
+	htmlContent := string(modifiedHTML.Bytes())
 
-	// Also save a copy to the current working directory for easier access
+	// Replace asset paths with relative paths
+	htmlContent = strings.Replace(htmlContent, `href="/assets/css/tasks_list.css"`, `href="assets/css/tasks_list.css"`, -1)
+	htmlContent = strings.Replace(htmlContent, `src="/assets/js/tasks_list.js"`, `src="assets/js/tasks_list.js"`, -1)
+
+	// Write the modified HTML to the file
+	file.WriteString(htmlContent)
+
+	// Also save a debug copy in current directory too
 	debugFilePath := "debug_tasks_list.html"
-	debugContent, _ := os.ReadFile(filePath)
-	_ = os.WriteFile(debugFilePath, debugContent, 0644)
+	os.WriteFile(debugFilePath, []byte(htmlContent), 0644)
 	fmt.Println("DEBUG: Also saved a debug copy at:", debugFilePath)
 
 	// Open the HTML file in the default browser

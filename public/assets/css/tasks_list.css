@@ -1,0 +1,47 @@
+body { 
+    padding: 30px; 
+    background-color: #f8f9fa;
+}
+.tasks-container { 
+    max-width: 800px; 
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+.task-card { 
+    margin-bottom: 20px; 
+    border: 1px solid #dee2e6;
+}
+.page-title {
+    color: #343a40;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+.task-actions {
+    display: flex;
+    gap: 10px;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+.filter-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+.hidden {
+    display: none;
+} 
