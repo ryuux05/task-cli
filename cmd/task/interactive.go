@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"bufio"
 	"flag"
+	"fmt"
 	"os"
-	"strings"
 	"strconv"
-	"github.com/ryuux05/cli-task/task"
+	"strings"
+
+	"github.com/ryuux05/task-cli/task"
 )
 
 func startInteractiveMode(service task.TaskService) {
@@ -45,15 +46,63 @@ func startInteractiveMode(service task.TaskService) {
 
 		case "done":
 			if len(args) < 2 {
-				fmt.Println("Usage: done <task_id>")
-				continue
+				fmt.Println("Usage: task done <task_id>")
+				return
 			}
 			id, err := strconv.Atoi(args[1])
 			if err != nil {
 				fmt.Println("Invalid task ID.")
-				continue
+				return
 			}
 			service.HandleDone(id)
+
+		case "update":
+			if len(args) < 3 {
+				fmt.Println("Usage: task update <task_id> <new_name>")
+				return
+			}
+			id, err := strconv.Atoi(args[1])
+			if err != nil {
+				fmt.Println("Invalid task ID.")
+				return
+			}
+			updateCmd := flag.NewFlagSet("update", flag.ExitOnError)
+			completed := updateCmd.Bool("c", false, "Mark as completed")
+			updateCmd.Parse(args[2:])
+
+			updateData := task.UpdateTaskSchema{
+				ID:        id,
+				Name:      updateCmd.Arg(0),
+				Completed: completed,
+			}
+
+			service.HandleUpdate(updateData)
+
+		case "view":
+			if len(args) < 2 {
+				fmt.Println("Usage: task view <task_id>")
+				return
+			}
+			id, err := strconv.Atoi(args[1])
+			if err != nil {
+				fmt.Println("Invalid task ID.")
+				return
+			}
+			viewCmd := flag.NewFlagSet("view", flag.ContinueOnError)
+			format := viewCmd.String("format", "html", "Output format (html or text)")
+			// Parse from the remaining interactive arguments
+			if len(args) > 2 {
+				viewCmd.Parse(args[2:])
+			}
+
+			service.HandleViewTask(id, *format)
+
+		case "view-all":
+			viewAllCmd := flag.NewFlagSet("view-all", flag.ContinueOnError)
+			format := viewAllCmd.String("format", "html", "Output format (html or text)")
+			viewAllCmd.Parse(args[1:])
+
+			service.HandleViewAllTasks(*format)
 
 		case "delete":
 			if len(args) < 2 {
@@ -72,6 +121,9 @@ func startInteractiveMode(service task.TaskService) {
 			fmt.Println("  add <task_description> - Add a new task")
 			fmt.Println("  list - Show all tasks")
 			fmt.Println("  done <task_id> - Mark a task as completed")
+			fmt.Println("  update <task_id> <new_name> - Update a task")
+			fmt.Println("  view <task_id> - View task details")
+			fmt.Println("  view-all - View all tasks")
 			fmt.Println("  delete <task_id> - Delete a task")
 			fmt.Println("  exit - Exit the CLI")
 

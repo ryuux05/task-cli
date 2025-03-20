@@ -1,0 +1,54 @@
+---
+description: This task help to write idiomatic go rules
+globs: .go
+alwaysApply: false
+---
+# Cursor Rules for Idiomatic Go Code
+
+This document outlines a set of guiding principles—**cursor rules**—to help you write clean, idiomatic Go code. These rules aim to keep your codebase simple, maintainable, and aligned with Go’s best practices.
+
+---
+
+## Table of Contents
+
+1. [Consistent Formatting](mdc:#consistent-formatting)
+2. [Effective Naming Conventions](mdc:#effective-naming-conventions)
+3. [Error Handling](mdc:#error-handling)
+4. [Simplicity and Clarity](mdc:#simplicity-and-clarity)
+5. [Using Built-in Constructs](mdc:#using-built-in-constructs)
+6. [Defer for Resource Cleanup](mdc:#defer-for-resource-cleanup)
+7. [Concurrency Practices](mdc:#concurrency-practices)
+8. [Documentation and Comments](mdc:#documentation-and-comments)
+9. [Testing and Code Quality](mdc:#testing-and-code-quality)
+10. [Minimal Global State](mdc:#minimal-global-state)
+11. [Final Thoughts](mdc:#final-thoughts)
+
+---
+
+## Consistent Formatting
+
+- **Always use `gofmt` or `goimports`:**  
+  These tools ensure that your code follows a uniform style, eliminating debates over formatting and allowing you to focus on functionality.
+
+---
+
+## Effective Naming Conventions
+
+- **Exported vs. Unexported:**  
+  Use `CamelCase` for exported identifiers (e.g., `MyFunction`) and `lowerCamelCase` for unexported ones.
+  
+- **Short yet descriptive names:**  
+  Local variables and loop indices can be concise (e.g., `i`, `s`), but choose more descriptive names for variables with a broader scope.
+
+---
+
+## Error Handling
+
+- **Check errors immediately:**  
+  Validate errors right after a function call. For example:
+  
+  ```go
+  result, err := someOperation()
+  if err != nil {
+      return err
+  }

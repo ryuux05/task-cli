@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/ryuux05/cli-task/storage"
-	"github.com/ryuux05/cli-task/task"
+	"github.com/ryuux05/task-cli/storage"
+	"github.com/ryuux05/task-cli/task"
 )
 
 func main() {

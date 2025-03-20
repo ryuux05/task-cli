@@ -1,4 +1,4 @@
-module github.com/ryuux05/cli-task
+module github.com/ryuux05/task-cli
 
 go 1.23.4
 
